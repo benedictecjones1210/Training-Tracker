@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e0f11">
+<title>Hyrox Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:#0e0f11;--bg2:#15171a;--bg3:#1c1f23;--bg4:#242830;
+  --br:rgba(255,255,255,0.07);--br2:rgba(255,255,255,0.14);
+  --tx:#f0f0ee;--mu:#7a7f8a;
+  --ac:#c8f04a;--ac2:#8fe8c4;--rd:#f05a5a;--am:#f0b94a;--bl:#4a9cf0;--or:#f07a4a;
+  --fh:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;
+  --r:10px;--rs:6px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);min-height:100vh;font-size:15px;overflow-x:hidden}
+
+/* CONFIG SCREEN */
+.config-screen{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
+.config-screen.hidden{display:none}
+.config-logo{font-family:var(--fh);font-size:36px;font-weight:700;letter-spacing:.1em;color:var(--ac);margin-bottom:8px}
+.config-sub{font-size:14px;color:var(--mu);margin-bottom:32px;text-align:center;line-height:1.6}
+.config-card{width:100%;max-width:420px;background:var(--bg2);border:1px solid var(--br2);border-radius:var(--r);padding:24px}
+.config-card h2{font-family:var(--fh);font-size:20px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.config-card p{font-size:13px;color:var(--mu);margin-bottom:20px;line-height:1.6}
+.field-label{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.config-input{width:100%;background:var(--bg3);border:1px solid var(--br2);color:var(--tx);font-family:var(--fb);font-size:13px;padding:10px 12px;border-radius:var(--rs);margin-bottom:14px;font-family:monospace}
+.config-input:focus{outline:none;border-color:var(--ac)}
+.config-btn{width:100%;padding:13px;background:var(--ac);color:#0e0f11;font-family:var(--fh);font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer;transition:opacity .15s}
+.config-btn:active{opacity:.8}
+.config-err{font-size:12px;color:var(--rd);margin-top:10px;display:none}
+.config-err.on{display:block}
+.config-hint{font-size:11px;color:var(--mu);margin-top:12px;line-height:1.6;text-align:center}
+.config-hint a{color:var(--ac);text-decoration:none}
+
+/* NAV */
+.nav{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--br);padding:calc(var(--safe-top) + 10px) 14px 10px;gap:0;position:sticky;top:0;z-index:100}
+.logo{font-family:var(--fh);font-size:18px;font-weight:700;letter-spacing:.1em;color:var(--ac);margin-right:10px;white-space:nowrap}
+.ntabs{display:flex;flex:1;overflow-x:auto;scrollbar-width:none}
+.ntabs::-webkit-scrollbar{display:none}
+.nt{padding:6px 12px;font-family:var(--fh);font-size:13px;font-weight:600;letter-spacing:.07em;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.nt.on{color:var(--ac);border-bottom-color:var(--ac)}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.wsel{background:var(--bg3);border:1px solid var(--br2);color:var(--tx);font-family:var(--fh);font-size:13px;padding:5px 8px;border-radius:var(--rs);flex-shrink:0}
+.sync-btn{background:none;border:1px solid var(--br2);color:var(--mu);font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.06em;padding:5px 9px;border-radius:var(--rs);cursor:pointer;white-space:nowrap;transition:all .15s}
+.sync-btn.syncing{color:var(--ac);border-color:rgba(200,240,74,.3);animation:pulse 1.2s infinite}
+.sync-btn.ok{color:var(--ac2);border-color:rgba(143,232,196,.3)}
+.sync-btn.err{color:var(--rd);border-color:rgba(240,90,90,.3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* PAGES */
+.pg{display:none;padding:14px 14px calc(80px + var(--safe-bot))}
+.pg.on{display:block}
+
+/* DAY PILLS */
+.dpills{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:6px;margin-bottom:16px}
+.dpills::-webkit-scrollbar{display:none}
+.dp{padding:8px 15px;border-radius:20px;border:1px solid var(--br2);background:var(--bg3);font-family:var(--fh);font-size:13px;font-weight:600;color:var(--mu);cursor:pointer;white-space:nowrap;transition:all .15s}
+.dp.on{background:var(--ac);color:#0e0f11;border-color:var(--ac)}
+
+/* SESSION HEADER */
+.sh{margin-bottom:16px}
+.sh h2{font-family:var(--fh);font-size:28px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.1}
+.sh p{font-size:12px;color:var(--mu);margin-top:4px}
+
+/* INFO CARDS */
+.info-card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.ic-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ic-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ic-title{font-family:var(--fh);font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;line-height:1.1;flex:1}
+.ic-dur{font-size:11px;color:var(--am);background:rgba(240,185,74,.12);border:1px solid rgba(240,185,74,.25);padding:2px 8px;border-radius:4px;white-space:nowrap}
+.ic-desc{font-size:13px;color:var(--tx);line-height:1.65;margin-bottom:10px}
+.ic-cue{font-size:12px;color:var(--mu);border-left:2px solid var(--br2);padding-left:10px;margin-bottom:12px;line-height:1.5}
+.log-label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fh);margin-bottom:6px}
+.feel-row{display:flex;gap:6px;margin-top:8px}
+.fb{flex:1;padding:9px 4px;border-radius:var(--rs);border:1px solid var(--br2);background:var(--bg3);color:var(--mu);font-family:var(--fh);font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .12s}
+.fb.easy{background:rgba(143,232,196,.15);border-color:var(--ac2);color:var(--ac2)}
+.fb.good{background:rgba(240,185,74,.15);border-color:var(--am);color:var(--am)}
+.fb.tough{background:rgba(240,90,90,.15);border-color:var(--rd);color:var(--rd)}
+
+/* EXERCISE CARDS */
+.ex-card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.ex-card:hover{border-color:var(--br2)}
+.ex-hdr{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer;user-select:none}
+.ex-n{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.1em;min-width:24px}
+.ex-name{font-family:var(--fh);font-size:19px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;flex:1;line-height:1.1}
+.ex-meta{font-size:12px;color:var(--mu);white-space:nowrap}
+.ex-chev{color:var(--mu);font-size:16px;transition:transform .2s;flex-shrink:0}
+.ex-card.open .ex-chev{transform:rotate(180deg)}
+.ex-body{display:none;border-top:1px solid var(--br)}
+.ex-card.open .ex-body{display:block}
+
+/* DIAGRAM */
+.diag-wrap{margin:12px 12px 0;background:var(--bg3);border-radius:var(--r);padding:12px;display:flex;gap:12px}
+.diag-svg{width:95px;height:95px;flex-shrink:0;background:var(--bg4);border-radius:var(--rs);display:flex;align-items:center;justify-content:center}
+.diag-svg svg{width:85px;height:85px}
+.diag-info{flex:1;min-width:0}
+.mtags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.mtag{font-size:10px;background:var(--bg4);border:1px solid var(--br2);color:var(--mu);padding:2px 6px;border-radius:3px}
+.diag-cue{font-size:12px;color:var(--mu);line-height:1.55}
+.diag-cue b{display:block;font-family:var(--fh);font-size:10px;color:var(--ac2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;font-weight:600}
+
+/* SET LOGGING */
+.sets-area{padding:14px}
+.sets-area h4{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.set-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.set-lbl{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--mu);min-width:42px}
+.winput{background:var(--bg3);border:1px solid var(--br2);color:var(--tx);font-family:var(--fb);font-size:15px;padding:8px;border-radius:var(--rs);width:70px;text-align:center}
+.winput:focus{outline:none;border-color:var(--ac)}
+.kglabel{font-size:12px;color:var(--mu)}
+.rpe-wrap{display:flex;gap:5px;flex:1}
+.rb{flex:1;padding:8px 2px;border-radius:var(--rs);border:1px solid var(--br2);background:var(--bg3);color:var(--mu);font-family:var(--fh);font-size:11px;font-weight:700;cursor:pointer;text-align:center;transition:all .12s;min-width:0}
+.rb.easy{background:rgba(143,232,196,.15);border-color:var(--ac2);color:var(--ac2)}
+.rb.ok{background:rgba(240,185,74,.15);border-color:var(--am);color:var(--am)}
+.rb.hard{background:rgba(240,90,90,.15);border-color:var(--rd);color:var(--rd)}
+.notes-inp{width:100%;background:var(--bg3);border:1px solid var(--br2);color:var(--tx);font-family:var(--fb);font-size:13px;padding:9px;border-radius:var(--rs);resize:none;margin-top:6px}
+.notes-inp:focus{outline:none;border-color:var(--ac)}
+.sug-box{margin-top:10px;padding:10px 12px;background:rgba(200,240,74,.06);border:1px solid rgba(200,240,74,.2);border-radius:var(--rs);font-size:12px;color:var(--ac);display:none;line-height:1.55}
+.sug-box.on{display:block}
+.sug-box b{display:block;font-family:var(--fh);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.ai-btn{margin-top:10px;width:100%;padding:11px;background:var(--bg3);border:1px solid var(--br2);color:var(--mu);font-family:var(--fh);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:var(--rs);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.ai-btn:active{opacity:.8}
+.spin{width:12px;height:12px;border:2px solid var(--br2);border-top-color:var(--ac);border-radius:50%;animation:sp .7s linear infinite;display:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ai-resp{margin-top:8px;padding:12px;background:var(--bg3);border:1px solid var(--br);border-radius:var(--rs);font-size:13px;color:var(--tx);line-height:1.65;display:none}
+.ai-resp.on{display:block}
+.ai-resp .al{font-family:var(--fh);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);margin-bottom:6px}
+
+/* SAVE BAR */
+.save-bar{margin-top:18px;display:flex;gap:12px;align-items:center}
+.save-btn{padding:13px 26px;background:var(--ac);color:#0e0f11;font-family:var(--fh);font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:8px}
+.save-btn:active{opacity:.8}
+.save-status{font-size:13px;color:var(--mu)}
+
+/* HISTORY */
+.h-card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.h-card h3{font-family:var(--fh);font-size:20px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+.h-date{font-size:12px;color:var(--mu);margin-bottom:12px}
+.h-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-top:1px solid var(--br);font-size:12px;flex-wrap:wrap}
+.h-exn{color:var(--mu);min-width:100px;flex-shrink:0;padding-top:2px;line-height:1.4}
+.h-sets{display:flex;gap:4px;flex-wrap:wrap}
+.hs{padding:2px 7px;border-radius:3px;font-size:11px;font-family:var(--fh);font-weight:700}
+.hs.easy{background:rgba(143,232,196,.12);color:var(--ac2);border:1px solid rgba(143,232,196,.25)}
+.hs.ok{background:rgba(240,185,74,.12);color:var(--am);border:1px solid rgba(240,185,74,.25)}
+.hs.hard{background:rgba(240,90,90,.12);color:var(--rd);border:1px solid rgba(240,90,90,.25)}
+.hs.logged{background:rgba(74,156,240,.12);color:var(--bl);border:1px solid rgba(74,156,240,.25)}
+.empty{text-align:center;padding:48px 16px;color:var(--mu)}
+.empty h3{font-family:var(--fh);font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx);margin-bottom:8px}
+
+/* BOTTOM NAV */
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--br);padding:10px 0 calc(10px + var(--safe-bot));z-index:100}
+@media(max-width:640px){.bnav{display:flex}.nav .ntabs{display:none}}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0}
+.bn-icon{width:22px;height:22px}
+.bn-label{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--mu);text-transform:uppercase;transition:color .15s}
+.bn.on .bn-label{color:var(--ac)}
+
+/* COLOUR DOTS */
+.dot-run{background:var(--rd)}.dot-gym{background:var(--ac)}.dot-cond{background:var(--bl)}
+.dot-sau{background:var(--am)}.dot-mob{background:var(--ac2)}.dot-rest{background:var(--mu)}.dot-rec{background:var(--or)}
+</style>
+</head>
+<body>
+
+<!-- CONFIG SCREEN -->
+<div class="config-screen" id="config-screen">
+  <div class="config-logo">HYROX</div>
+  <p class="config-sub">Enter your Supabase credentials to enable<br>cross-device sync for your training history.</p>
+  <div class="config-card">
+    <h2>Connect database</h2>
+    <p>Paste your Supabase Project URL and Anon Key below. These are found in your Supabase project under Settings → API.</p>
+    <div class="field-label">Supabase Project URL</div>
+    <input class="config-input" id="sb-url" placeholder="https://xxxxxxxxxxxx.supabase.co">
+    <div class="field-label">Supabase Anon Key</div>
+    <input class="config-input" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+    <button class="config-btn" onclick="saveConfig()">Connect & Start Training</button>
+    <div class="config-err" id="config-err">Could not connect — check your URL and key and try again.</div>
+    <p class="config-hint">Don't have Supabase set up yet? Follow the <a href="#" onclick="alert('See the SETUP-GUIDE.md file included with this app.')">setup guide</a> included with this app.</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<nav class="nav">
+  <div class="logo">HYROX</div>
+  <div class="ntabs">
+    <div class="nt on" onclick="showPg('log',0)">Log session</div>
+    <div class="nt" onclick="showPg('hist',1)">History</div>
+  </div>
+  <div class="nav-right">
+    <button class="sync-btn" id="sync-btn" onclick="syncNow()">Sync</button>
+    <select class="wsel" id="wsel" onchange="renderDay()">
+      <option value="1">Week 1</option><option value="2">Week 2</option>
+      <option value="3">Week 3</option><option value="4">Week 4</option>
+      <option value="5">Week 5</option><option value="6">Week 6</option>
+      <option value="7">Week 7</option><option value="8">Week 8</option>
+    </select>
+  </div>
+</nav>
+
+<div class="pg on" id="pg-log">
+  <div class="dpills" id="dpills"></div>
+  <div class="sh"><h2 id="s-title">Monday</h2><p id="s-sub"></p></div>
+  <div id="session-content"></div>
+  <div class="save-bar" id="save-bar" style="display:none">
+    <button class="save-btn" id="save-btn" onclick="saveSession()">
+      <div class="spin" id="save-spin"></div>
+      Save session
+    </button>
+    <span class="save-status" id="save-status"></span>
+  </div>
+</div>
+
+<div class="pg" id="pg-hist">
+  <div class="sh"><h2>History</h2><p id="hist-sub">Loading…</p></div>
+  <div id="hist-grid"></div>
+</div>
+
+<nav class="bnav">
+  <div class="bn on" id="bn-log" onclick="showPg('log',0)">
+    <svg class="bn-icon" viewBox="0 0 22 22" fill="none">
+      <rect x="3" y="3" width="16" height="16" rx="3" fill="var(--mu)"/>
+      <path d="M7 8h8M7 11h8M7 14h5" stroke="var(--bg2)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="bn-label">Log</span>
+  </div>
+  <div class="bn" id="bn-hist" onclick="showPg('hist',1)">
+    <svg class="bn-icon" viewBox="0 0 22 22" fill="none">
+      <circle cx="11" cy="11" r="8" fill="var(--mu)"/>
+      <path d="M11 7v4l3 3" stroke="var(--bg2)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="bn-label">History</span>
+  </div>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
