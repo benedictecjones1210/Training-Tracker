@@ -4,7 +4,7 @@
 ═══════════════════════════════════════════════════════ */
 
 /* ── SUPABASE SETUP ── */
-let supabase = null;
+let sbClient = null;
 
 function saveConfig() {
   let url = document.getElementById('sb-url').value.trim();
@@ -25,7 +25,7 @@ function showConfigErr(msg) {
 
 async function initSupabase(url, key) {
   try {
-    supabase = window.supabase.createClient(url, key);
+    sbClient = window.supabase.createClient(url, key);
     // Just connect — don't test, go straight in
     document.getElementById('config-screen').classList.add('hidden');
     await loadHistory();
@@ -339,9 +339,9 @@ let sessionInputs = {};
 let history = [];
 
 async function loadHistory() {
-  if (!supabase) return;
+  if (!sbClient) return;
   try {
-    const { data, error } = await supabase.from('sessions').select('*').order('created_at', { ascending: false }).limit(200);
+    const { data, error } = await sbClient.from('sessions').select('*').order('created_at', { ascending: false }).limit(200);
     if (!error && data) history = data;
   } catch(e) {}
 }
@@ -563,7 +563,7 @@ async function getAi(ei, name, sets, reps) {
    SAVE SESSION
 ═══════════════════════════════════════════════════════ */
 async function saveSession() {
-  if (!supabase) { document.getElementById('save-status').textContent = 'Not connected to database.'; return; }
+  if (!sbClient) { document.getElementById('save-status').textContent = 'Not connected to database.'; return; }
   const w = document.getElementById('wsel').value;
   const band = getWeekBand(w);
   const dayData = PROGRAMME[currentDay];
@@ -596,7 +596,7 @@ async function saveSession() {
   };
 
   try {
-    const { error } = await supabase.from('sessions').insert([entry]);
+    const { error } = await sbClient.from('sessions').insert([entry]);
     if (error) throw error;
     history.unshift({...entry, created_at: new Date().toISOString()});
     document.getElementById('save-status').textContent = 'Saved & synced ✓';
