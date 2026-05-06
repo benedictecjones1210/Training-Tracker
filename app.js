@@ -7,10 +7,12 @@
 let supabase = null;
 
 function saveConfig() {
-  const url = document.getElementById('sb-url').value.trim();
+  let url = document.getElementById('sb-url').value.trim();
   const key = document.getElementById('sb-key').value.trim();
   if (!url || !key) { showConfigErr('Please fill in both fields.'); return; }
-  if (!url.startsWith('https://') || !url.includes('supabase.co')) { showConfigErr('URL should look like: https://xxxx.supabase.co'); return; }
+  // Strip any trailing slashes or paths — just keep the base URL
+  url = url.replace(/\/(rest|auth|storage|realtime).*$/,'').replace(/\/+$/,'');
+  if (!url.startsWith('https://')) { showConfigErr('URL should start with https://'); return; }
   localStorage.setItem('sb_url', url);
   localStorage.setItem('sb_key', key);
   initSupabase(url, key);
@@ -24,14 +26,7 @@ function showConfigErr(msg) {
 async function initSupabase(url, key) {
   try {
     supabase = window.supabase.createClient(url, key);
-    // Test connection
-    const { error } = await supabase.from('sessions').select('id').limit(1);
-    if (error && error.code !== 'PGRST116' && error.code !== '42P01') {
-      // 42P01 = table doesn't exist yet (first time), that's OK
-      if (error.message && error.message.includes('Invalid API key')) {
-        showConfigErr('Invalid API key — check your Anon Key.'); return;
-      }
-    }
+    // Just connect — don't test, go straight in
     document.getElementById('config-screen').classList.add('hidden');
     await loadHistory();
     renderDayPills();
