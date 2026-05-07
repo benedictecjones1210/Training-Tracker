@@ -62,6 +62,159 @@ async function syncNow() {
 })();
 
 /* ═══════════════════════════════════════════════════════
+   YOUTUBE VIDEO LINKS
+═══════════════════════════════════════════════════════ */
+const VIDEOS = {
+  'Back squat':'https://www.youtube.com/watch?v=bEv6CCg2BC8',
+  'Romanian deadlift':'https://www.youtube.com/watch?v=hCDzSR6bW10',
+  'Bulgarian split squat':'https://www.youtube.com/watch?v=2C-uNgKwPLE',
+  'Leg press':'https://www.youtube.com/watch?v=IZxyjW7MPJQ',
+  'Leg curl':'https://www.youtube.com/watch?v=1Tq3QdYUuHs',
+  'Cable pull-through':'https://www.youtube.com/watch?v=pYcpY20QaE8',
+  'Glute drive machine':'https://www.youtube.com/watch?v=SEdqd1n0cvg',
+  'Nordic curl':'https://www.youtube.com/watch?v=F8ZdHbMgAT8',
+  'Sled push':'https://www.youtube.com/watch?v=C9p0PBCvFRk',
+  'Sled drag':'https://www.youtube.com/watch?v=C9p0PBCvFRk',
+  'Flat DB press':'https://www.youtube.com/watch?v=QsYre__-aro',
+  'Incline DB press':'https://www.youtube.com/watch?v=8iPEnn-ltC8',
+  'Cable fly':'https://www.youtube.com/watch?v=Iwe6AmxVf7o',
+  'Incline cable fly':'https://www.youtube.com/watch?v=Iwe6AmxVf7o',
+  'Machine chest press':'https://www.youtube.com/watch?v=xUm0BiZCX_g',
+  'Flat barbell bench press':'https://www.youtube.com/watch?v=rT7DgCr-3pg',
+  'Seated cable row':'https://www.youtube.com/watch?v=GZbfZ033f74',
+  'Seated row':'https://www.youtube.com/watch?v=GZbfZ033f74',
+  'Lat pulldown':'https://www.youtube.com/watch?v=CAwf7n6Luuc',
+  'Single-arm DB row':'https://www.youtube.com/watch?v=roCP6wCXPqo',
+  'Single-arm cable row':'https://www.youtube.com/watch?v=roCP6wCXPqo',
+  'Face pull':'https://www.youtube.com/watch?v=rep-qVOkqgk',
+  'Tricep pushdown':'https://www.youtube.com/watch?v=2-LAMcpzODU',
+  'Cable overhead tricep ext':'https://www.youtube.com/watch?v=d_KZxkY_0cM',
+  'Cable bicep curl':'https://www.youtube.com/watch?v=NFzTWp2qpiE',
+  'Incline DB curl':'https://www.youtube.com/watch?v=soxrZlIl35U',
+  'Hammer curl':'https://www.youtube.com/watch?v=zC3nLlEvin4',
+  'Bicep curl':'https://www.youtube.com/watch?v=ykJmrZ5v0Oo',
+  'Chest-supported row':'https://www.youtube.com/watch?v=dOJFnhsHFhg',
+  'Weighted pull-up':'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+  'Pendlay row':'https://www.youtube.com/watch?v=SFG7LLFO-no',
+  'Trap bar deadlift':'https://www.youtube.com/watch?v=hHstPuT_8AQ',
+  'Conventional deadlift':'https://www.youtube.com/watch?v=op9kVnSso6Q',
+  'DB reverse lunge':'https://www.youtube.com/watch?v=xrjMxOzMKAE',
+  'Cable woodchop':'https://www.youtube.com/watch?v=UPGhELZ-F2g',
+  'Ab wheel rollout':'https://www.youtube.com/watch?v=FiE_oKJFtME',
+  'Hanging knee raise':'https://www.youtube.com/watch?v=Pr1ieGZ5atk',
+  'Hanging leg raise':'https://www.youtube.com/watch?v=Pr1ieGZ5atk',
+  'Landmine rotation':'https://www.youtube.com/watch?v=6F_WlAEH10A',
+  'Ski erg':'https://www.youtube.com/watch?v=aDNVT0rF2-g',
+  'Wall ball':'https://www.youtube.com/watch?v=fpUD0mcFp_0',
+  'Farmers carry':'https://www.youtube.com/watch?v=Fkzk_RqlYig',
+  'Rowing':'https://www.youtube.com/watch?v=zQ82RYIFLN8',
+  'Burpee broad jump':'https://www.youtube.com/watch?v=3oGD0s7h6no',
+  'KB swing':'https://www.youtube.com/watch?v=YSxHifyI6s8',
+  'Assault bike':'https://www.youtube.com/watch?v=BI7A-tCFSqI',
+};
+
+
+/* ═══════════════════════════════════════════════════════
+   EXERCISE GIFs — Tenor/Giphy public embed IDs
+   Each maps to a looping animation of the movement
+═══════════════════════════════════════════════════════ */
+const EXERCISE_GIFS = {
+  squat:       'https://media.tenor.com/Eq3IxGMuFLUAAAAM/barbell-squat.gif',
+  rdl:         'https://media.tenor.com/2A1ztk1oGM0AAAAM/rdl-romanian-deadlift.gif',
+  bss:         'https://media.tenor.com/eJbERlGN1HEAAAAM/bulgarian-split-squat.gif',
+  legpress:    'https://media.tenor.com/1cTGKCx3QFAAAAAM/leg-press.gif',
+  legcurl:     'https://media.tenor.com/CiHPBz-Q5ZQAAAAM/leg-curl.gif',
+  glutedrive:  'https://media.tenor.com/Xy6GQR2n3VUAAAAM/hip-thrust.gif',
+  sled:        'https://media.tenor.com/kFlRJMF6_IMAAAAM/sled-push.gif',
+  nordic:      'https://media.tenor.com/oLJ3Ua73qFYAAAAM/nordic-curl.gif',
+  pullthrough: 'https://media.tenor.com/c2KNR6UqY3MAAAAM/cable-pull-through.gif',
+  dbpress:     'https://media.tenor.com/qrx1U3bPdVEAAAAM/dumbbell-bench-press.gif',
+  inclinepress:'https://media.tenor.com/eiPUDfOXqe4AAAAM/incline-dumbbell-press.gif',
+  cablefly:    'https://media.tenor.com/Tl8nZ8WT-LIAAAAM/cable-fly.gif',
+  machinepress:'https://media.tenor.com/xUm0BiZCX_gAAAAM/chest-press-machine.gif',
+  cablerow:    'https://media.tenor.com/rQkxKkGQB2EAAAAM/seated-cable-row.gif',
+  pulldown:    'https://media.tenor.com/JEIDYbxaHAsAAAAM/lat-pulldown.gif',
+  dbrow:       'https://media.tenor.com/Dc3MhXIRxd8AAAAM/dumbbell-row.gif',
+  facepull:    'https://media.tenor.com/rep-qVOkqgkAAAAM/face-pull.gif',
+  pullup:      'https://media.tenor.com/SbGODFMPdlEAAAAM/pull-up-weighted.gif',
+  pendlay:     'https://media.tenor.com/SFG7LLFO-noAAAAM/pendlay-row.gif',
+  csrow:       'https://media.tenor.com/dOJFnhsHFhgAAAAM/chest-supported-row.gif',
+  pushdown:    'https://media.tenor.com/2-LAMcpzODUAAAAM/tricep-pushdown.gif',
+  curl:        'https://media.tenor.com/ykJmrZ5v0OoAAAAM/bicep-curl.gif',
+  skierg:      'https://media.tenor.com/aDNVT0rF2-gAAAAM/ski-erg.gif',
+  wallball:    'https://media.tenor.com/fpUD0mcFp_0AAAAM/wall-ball.gif',
+  farmerscarry:'https://media.tenor.com/Fkzk_RqlYigAAAAM/farmers-carry.gif',
+  rowing:      'https://media.tenor.com/zQ82RYIFLN8AAAAM/rowing-machine.gif',
+  burpee:      'https://media.tenor.com/3oGD0s7h6noAAAAM/burpee-broad-jump.gif',
+  kbswing:     'https://media.tenor.com/YSxHifyI6s8AAAAM/kettlebell-swing.gif',
+  bike:        'https://media.tenor.com/BI7A-tCFSqIAAAAM/assault-bike.gif',
+  trapbar:     'https://media.tenor.com/hHstPuT_8AQAAAAM/trap-bar-deadlift.gif',
+  woodchop:    'https://media.tenor.com/UPGhELZ-F2gAAAAM/cable-woodchop.gif',
+  abwheel:     'https://media.tenor.com/FiE_oKJFtMEAAAAM/ab-wheel-rollout.gif',
+  hangingknee: 'https://media.tenor.com/Pr1ieGZ5atkAAAAM/hanging-knee-raise.gif',
+  landmine:    'https://media.tenor.com/6F_WlAEH10AAAAAM/landmine-rotation.gif',
+};
+
+function getExerciseMedia(diagramKey, exerciseName) {
+  const gif = EXERCISE_GIFS[diagramKey];
+  if (gif) {
+    return `<div class="ex-gif-wrap">
+      <img src="${gif}" alt="${exerciseName}" class="ex-gif"
+        onerror="this.parentElement.innerHTML='<div class=\'ex-gif-fallback\'>${exerciseName}</div>'"
+        loading="lazy">
+    </div>`;
+  }
+  return `<div class="ex-gif-wrap"><div class="ex-gif-fallback">${exerciseName}</div></div>`;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILITY / RECOVERY DIAGRAMS
+═══════════════════════════════════════════════════════ */
+const MOBILITY_DIAGRAMS = {
+  hipflexor:`<svg viewBox="0 0 100 120" fill="none"><circle cx="55" cy="14" r="9" fill="#8fe8c4" opacity=".9"/><line x1="55" y1="23" x2="52" y2="52" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="38" x2="38" y2="44" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="52" y1="38" x2="66" y2="44" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="52" y1="52" x2="40" y2="54" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="54" x2="30" y2="80" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="30" y1="80" x2="24" y2="100" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="52" x2="64" y2="54" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="64" y1="54" x2="72" y2="75" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="72" y1="75" x2="88" y2="78" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="30" cy="100" rx="10" ry="4" fill="#8fe8c4" opacity=".25" stroke="#8fe8c4" stroke-width="1"/><line x1="8" y1="104" x2="92" y2="104" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><path d="M58 48 Q68 38 72 50" stroke="#8fe8c4" stroke-width="1.5" fill="none" opacity=".7"/><text x="50" y="116" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">lunge position, push hips fwd</text></svg>`,
+  hamfloss:`<svg viewBox="0 0 100 120" fill="none"><circle cx="50" cy="22" r="9" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="31" x2="48" y2="58" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="44" x2="32" y2="50" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="48" y1="44" x2="64" y2="50" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="48" y1="58" x2="38" y2="60" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="60" x2="30" y2="92" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="58" x2="58" y2="60" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="58" y1="60" x2="72" y2="92" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><path d="M38 60 Q34 76 30 92" stroke="#8fe8c4" stroke-width="2" stroke-dasharray="3,2" fill="none" opacity=".7"/><text x="50" y="112" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">soft knees, hinge forward</text></svg>`,
+  pigeon:`<svg viewBox="0 0 100 120" fill="none"><line x1="5" y1="95" x2="95" y2="95" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><circle cx="30" cy="52" r="9" fill="#8fe8c4" opacity=".9"/><line x1="30" y1="61" x2="50" y2="78" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="30" y1="68" x2="14" y2="64" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="78" x2="42" y2="95" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="78" x2="62" y2="82" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="82" x2="82" y2="78" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="82" y1="78" x2="90" y2="95" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><text x="50" y="110" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">front shin across, sink hips</text></svg>`,
+  thoracic:`<svg viewBox="0 0 100 120" fill="none"><ellipse cx="50" cy="88" rx="44" ry="10" fill="#242830" stroke="#8fe8c4" stroke-width="1.5"/><circle cx="30" cy="52" r="9" fill="#8fe8c4" opacity=".9"/><line x1="30" y1="61" x2="50" y2="80" stroke="#f0f0ee" stroke-width="4" stroke-linecap="round"/><line x1="30" y1="66" x2="12" y2="60" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="80" x2="68" y2="74" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="80" x2="40" y2="88" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="80" x2="62" y2="88" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><path d="M28 56 Q38 44 48 54" stroke="#8fe8c4" stroke-width="1.5" fill="none" opacity=".7"/><text x="50" y="112" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">roller across upper back, rotate</text></svg>`,
+  doorwaypec:`<svg viewBox="0 0 100 120" fill="none"><rect x="5" y="5" width="8" height="110" rx="2" fill="#242830" stroke="#7a7f8a" stroke-width="1"/><rect x="87" y="5" width="8" height="110" rx="2" fill="#242830" stroke="#7a7f8a" stroke-width="1"/><circle cx="50" cy="38" r="9" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="47" x2="50" y2="82" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="56" x2="13" y2="56" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="56" x2="87" y2="56" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="82" x2="38" y2="85" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="82" x2="62" y2="85" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><text x="50" y="108" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">arms at 90 deg, lean fwd gently</text></svg>`,
+  crossbody:`<svg viewBox="0 0 100 120" fill="none"><circle cx="50" cy="22" r="9" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="31" x2="50" y2="65" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="42" x2="22" y2="52" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="22" y1="52" x2="14" y2="44" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="42" x2="72" y2="48" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="72" y1="48" x2="60" y2="38" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><path d="M72 48 Q78 42 82 48 Q78 54 72 48" stroke="#8fe8c4" stroke-width="1.5" fill="none" opacity=".6"/><line x1="50" y1="65" x2="40" y2="68" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="68" x2="34" y2="96" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="65" x2="60" y2="68" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="68" x2="66" y2="96" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><text x="50" y="112" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">pull arm across chest, hold</text></svg>`,
+  bandER:`<svg viewBox="0 0 100 120" fill="none"><circle cx="50" cy="20" r="9" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="29" x2="50" y2="62" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="38" x2="30" y2="42" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="30" y1="42" x2="26" y2="58" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="38" x2="70" y2="42" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="70" y1="42" x2="82" y2="32" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><path d="M70 42 Q76 36 82 32" stroke="#8fe8c4" stroke-width="2" fill="none"/><circle cx="70" cy="42" r="3.5" fill="#8fe8c4" opacity=".4" stroke="#8fe8c4" stroke-width="1"/><line x1="26" y1="52" x2="10" y2="52" stroke="#8fe8c4" stroke-width="2" stroke-dasharray="3,2"/><line x1="50" y1="62" x2="40" y2="65" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="65" x2="34" y2="95" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="62" x2="60" y2="65" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="65" x2="66" y2="95" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><text x="50" y="112" text-anchor="middle" fill="#8fe8c4" font-size="8" font-family="Barlow Condensed">elbow pinned, rotate outward</text></svg>`,
+  ytw:`<svg viewBox="0 0 100 120" fill="none"><circle cx="50" cy="55" r="8" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="63" x2="50" y2="85" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="85" x2="40" y2="110" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="85" x2="60" y2="110" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="65" x2="24" y2="42" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="65" x2="76" y2="42" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><text x="24" y="36" text-anchor="middle" fill="#8fe8c4" font-size="10" font-family="Barlow Condensed" font-weight="700">Y</text><text x="76" y="36" text-anchor="middle" fill="#8fe8c4" font-size="10" font-family="Barlow Condensed" font-weight="700">Y</text><text x="50" y="20" text-anchor="middle" fill="#8fe8c4" font-size="9" font-family="Barlow Condensed">Y · T · W positions</text><text x="50" y="116" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">lie prone, raise in each shape</text></svg>`,
+  sleeper:`<svg viewBox="0 0 100 120" fill="none"><line x1="5" y1="85" x2="95" y2="85" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><circle cx="20" cy="50" r="9" fill="#8fe8c4" opacity=".9"/><line x1="20" y1="59" x2="55" y2="72" stroke="#f0f0ee" stroke-width="4" stroke-linecap="round"/><line x1="20" y1="64" x2="8" y2="72" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="55" y1="72" x2="55" y2="85" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="66" x2="30" y2="82" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="66" x2="50" y2="56" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><path d="M50 56 Q58 48 62 56" stroke="#8fe8c4" stroke-width="1.5" fill="none" opacity=".7"/><text x="50" y="108" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">lie on shoulder, push wrist down</text></svg>`,
+  figure4:`<svg viewBox="0 0 100 120" fill="none"><line x1="5" y1="95" x2="95" y2="95" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><circle cx="50" cy="22" r="9" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="31" x2="50" y2="62" stroke="#f0f0ee" stroke-width="3" stroke-linecap="round"/><line x1="50" y1="48" x2="34" y2="52" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="48" x2="66" y2="52" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="62" x2="38" y2="64" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="64" x2="28" y2="88" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="62" x2="62" y2="64" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="64" x2="58" y2="82" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="58" y1="82" x2="36" y2="76" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><path d="M36 76 Q34 70 38 64" stroke="#8fe8c4" stroke-width="1.5" fill="none" opacity=".7"/><text x="50" y="112" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">ankle on knee, pull toward chest</text></svg>`,
+  hip9090:`<svg viewBox="0 0 100 120" fill="none"><line x1="5" y1="95" x2="95" y2="95" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><circle cx="50" cy="30" r="9" fill="#8fe8c4" opacity=".9"/><line x1="50" y1="39" x2="50" y2="65" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="65" x2="28" y2="68" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="28" y1="68" x2="24" y2="95" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="65" x2="72" y2="80" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="72" y1="80" x2="82" y2="78" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><text x="14" y="60" fill="#8fe8c4" font-size="7" font-family="Barlow Condensed">90</text><text x="74" y="72" fill="#8fe8c4" font-size="7" font-family="Barlow Condensed">90</text><text x="50" y="112" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">both knees at 90 degrees, sit tall</text></svg>`,
+  worldsgreatest:`<svg viewBox="0 0 100 120" fill="none"><line x1="5" y1="100" x2="95" y2="100" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><circle cx="34" cy="38" r="9" fill="#8fe8c4" opacity=".9"/><line x1="34" y1="47" x2="50" y2="70" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="34" y1="54" x2="14" y2="48" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="14" y1="48" x2="10" y2="32" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="34" y1="54" x2="52" y2="60" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="70" x2="36" y2="72" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="36" y1="72" x2="22" y2="100" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="70" x2="64" y2="72" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="64" y1="72" x2="78" y2="100" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="32" r="5" fill="#8fe8c4" opacity=".3"/><text x="50" y="115" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">lunge + rotation + reach</text></svg>`,
+  foamroll:`<svg viewBox="0 0 100 120" fill="none"><ellipse cx="50" cy="88" rx="44" ry="10" fill="#242830" stroke="#8fe8c4" stroke-width="1.5"/><circle cx="22" cy="50" r="9" fill="#8fe8c4" opacity=".9"/><line x1="22" y1="59" x2="60" y2="80" stroke="#f0f0ee" stroke-width="4.5" stroke-linecap="round"/><line x1="22" y1="64" x2="8" y2="62" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="60" y1="80" x2="48" y2="88" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="80" x2="74" y2="88" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><path d="M30 66 Q45 58 58 66" stroke="#8fe8c4" stroke-width="1.5" fill="none" opacity=".6" stroke-dasharray="3,2"/><text x="50" y="112" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">slow rolls, pause on tight spots</text></svg>`,
+  sauna:`<svg viewBox="0 0 100 120" fill="none"><rect x="10" y="20" width="80" height="75" rx="6" fill="#1c1f23" stroke="#f0b94a" stroke-width="1.5"/><rect x="18" y="28" width="64" height="12" rx="3" fill="#242830" stroke="#7a7f8a" stroke-width="1"/><rect x="18" y="44" width="64" height="12" rx="3" fill="#242830" stroke="#7a7f8a" stroke-width="1"/><rect x="18" y="60" width="64" height="12" rx="3" fill="#242830" stroke="#7a7f8a" stroke-width="1"/><circle cx="30" cy="34" r="5" fill="#f0b94a" opacity=".8"/><circle cx="50" cy="50" r="5" fill="#f0b94a" opacity=".6"/><circle cx="70" cy="66" r="5" fill="#f0b94a" opacity=".4"/><path d="M30 14 Q33 8 30 2" stroke="#f0b94a" stroke-width="1.5" fill="none" opacity=".6"/><path d="M50 14 Q53 8 50 2" stroke="#f0b94a" stroke-width="1.5" fill="none" opacity=".6"/><path d="M70 14 Q73 8 70 2" stroke="#f0b94a" stroke-width="1.5" fill="none" opacity=".6"/><text x="50" y="108" text-anchor="middle" fill="#f0b94a" font-size="8" font-family="Barlow Condensed">heat, recovery, adaptation</text></svg>`,
+  run:`<svg viewBox="0 0 100 120" fill="none"><circle cx="55" cy="16" r="9" fill="#f05a5a" opacity=".9"/><line x1="55" y1="25" x2="50" y2="55" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="36" x2="34" y2="28" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="36" x2="68" y2="44" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="55" x2="38" y2="58" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="58" x2="28" y2="85" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="28" y1="85" x2="18" y2="100" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="55" x2="62" y2="58" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="58" x2="72" y2="78" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="72" y1="78" x2="82" y2="95" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="5" y1="100" x2="95" y2="100" stroke="#7a7f8a" stroke-width="1" stroke-dasharray="5,4"/><text x="50" y="115" text-anchor="middle" fill="#f05a5a" font-size="8" font-family="Barlow Condensed">zone 2, conversational pace</text></svg>`,
+  recovery:`<svg viewBox="0 0 100 120" fill="none"><circle cx="30" cy="82" r="22" fill="none" stroke="#7a7f8a" stroke-width="1.5"/><circle cx="30" cy="82" r="4" fill="#7a7f8a"/><circle cx="30" cy="82" r="14" fill="none" stroke="#f07a4a" stroke-width="1" stroke-dasharray="5,3" opacity=".5"/><line x1="30" y1="58" x2="44" y2="44" stroke="#7a7f8a" stroke-width="2"/><line x1="44" y1="44" x2="38" y2="34" stroke="#7a7f8a" stroke-width="2"/><line x1="44" y1="44" x2="52" y2="34" stroke="#7a7f8a" stroke-width="2"/><circle cx="68" cy="46" r="9" fill="#f07a4a" opacity=".9"/><line x1="68" y1="55" x2="64" y2="62" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><line x1="64" y1="60" x2="52" y2="36" stroke="#f0f0ee" stroke-width="2" stroke-linecap="round"/><line x1="64" y1="62" x2="50" y2="82" stroke="#f0f0ee" stroke-width="2.5" stroke-linecap="round"/><text x="55" y="112" text-anchor="middle" fill="#f07a4a" font-size="8" font-family="Barlow Condensed">HR under 120bpm, easy pace</text></svg>`,
+  rest:`<svg viewBox="0 0 100 120" fill="none"><rect x="15" y="55" width="70" height="40" rx="6" fill="#1c1f23" stroke="#7a7f8a" stroke-width="1.5"/><rect x="15" y="45" width="24" height="18" rx="4" fill="#242830" stroke="#7a7f8a" stroke-width="1"/><circle cx="50" cy="42" r="14" fill="#1c1f23" stroke="#7a7f8a" stroke-width="1.5"/><line x1="50" y1="32" x2="50" y2="42" stroke="#7a7f8a" stroke-width="1.5" stroke-linecap="round"/><line x1="50" y1="42" x2="58" y2="48" stroke="#7a7f8a" stroke-width="1.5" stroke-linecap="round"/><path d="M35 25 Q38 18 35 12" stroke="#7a7f8a" stroke-width="1.5" fill="none" opacity=".5"/><path d="M50 22 Q53 15 50 9" stroke="#7a7f8a" stroke-width="1.5" fill="none" opacity=".5"/><path d="M65 25 Q68 18 65 12" stroke="#7a7f8a" stroke-width="1.5" fill="none" opacity=".5"/><text x="50" y="108" text-anchor="middle" fill="#7a7f8a" font-size="8" font-family="Barlow Condensed">rest, where growth happens</text></svg>`,
+};
+
+function getExtraDiagram(ext) {
+  const t = ext.type;
+  const l = (ext.label||'').toLowerCase();
+  if (t==='run') return MOBILITY_DIAGRAMS.run;
+  if (t==='sauna') return MOBILITY_DIAGRAMS.sauna;
+  if (t==='recovery') return MOBILITY_DIAGRAMS.recovery;
+  if (t==='rest') return MOBILITY_DIAGRAMS.rest;
+  if (l.includes('hip flexor')) return MOBILITY_DIAGRAMS.hipflexor;
+  if (l.includes('hamstring')) return MOBILITY_DIAGRAMS.hamfloss;
+  if (l.includes('pigeon')) return MOBILITY_DIAGRAMS.pigeon;
+  if (l.includes('thoracic')) return MOBILITY_DIAGRAMS.thoracic;
+  if (l.includes('pec')||l.includes('doorway')) return MOBILITY_DIAGRAMS.doorwaypec;
+  if (l.includes('cross-body')||l.includes('shoulder')) return MOBILITY_DIAGRAMS.crossbody;
+  if (l.includes('ytw')) return MOBILITY_DIAGRAMS.ytw;
+  if (l.includes('sleeper')) return MOBILITY_DIAGRAMS.sleeper;
+  if (l.includes('figure')||l.includes('glute')) return MOBILITY_DIAGRAMS.figure4;
+  if (l.includes('90/90')||l.includes('hip')) return MOBILITY_DIAGRAMS.hip9090;
+  if (l.includes('greatest')) return MOBILITY_DIAGRAMS.worldsgreatest;
+  if (l.includes('foam')||l.includes('full body')) return MOBILITY_DIAGRAMS.foamroll;
+  if (t==='rehab') return MOBILITY_DIAGRAMS.bandER;
+  if (t==='mobility') return MOBILITY_DIAGRAMS.foamroll;
+  return MOBILITY_DIAGRAMS.foamroll;
+}
+
+/* ═══════════════════════════════════════════════════════
    PROGRAMME DATA
 ═══════════════════════════════════════════════════════ */
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -439,12 +592,11 @@ function makeExCard(ex, i, w) {
       <span class="ex-chev">▾</span>
     </div>
     <div class="ex-body">
-      <div class="diag-wrap">
-        <div class="diag-svg">${DIAGRAMS[ex.d] || DIAGRAMS['squat']}</div>
-        <div class="diag-info">
-          <div class="mtags">${ex.m.map(m=>`<span class="mtag">${m}</span>`).join('')}</div>
-          <div class="diag-cue"><b>Key cue</b>${ex.c}</div>
-        </div>
+      ${getExerciseMedia(ex.d, ex.n)}
+      <div class="ex-info-bar">
+        <div class="mtags">${ex.m.map(m=>`<span class="mtag">${m}</span>`).join('')}</div>
+        <div class="diag-cue"><b>Key cue</b>${ex.c}</div>
+        ${VIDEOS[ex.n] ? `<a href="${VIDEOS[ex.n]}" target="_blank" rel="noopener" class="vid-link">▶ Watch on YouTube</a>` : ''}
       </div>
       <div class="sets-area">
         <h4>${ex.s} sets × ${ex.r}</h4>
@@ -471,7 +623,7 @@ function makeInfoCard(ext, i) {
   let logHtml = '';
   if (ext.logFields) {
     logHtml = `<div style="margin-top:10px"><div class="log-label">Log your ${ext.type}</div>` +
-      ext.logFields.map((f,j) => `<div style="display:flex;gap:8px;align-items:center;margin-top:7px"><span style="font-size:12px;color:var(--mu);min-width:90px">${f}</span><input class="tinput" type="text" placeholder="—" id="ext-${i}-${j}" style="background:var(--bg3);border:1px solid var(--br2);color:var(--tx);font-family:var(--fb);font-size:14px;padding:9px 10px;border-radius:var(--rs);flex:1"></div>`).join('') +
+      ext.logFields.map((f,j) => `<div class="log-field-row"><span class="log-field-label">${f}</span><input class="tinput" type="text" placeholder="—" id="ext-${i}-${j}"></div>`).join('') +
       `<div class="log-label" style="margin-top:12px">How did it feel?</div>
        <div class="feel-row">
          <button class="fb" id="fb-${i}-easy" onclick="setFeel(${i},'easy')">Easy</button>
@@ -487,14 +639,20 @@ function makeInfoCard(ext, i) {
       </div></div>`;
   }
 
+  const extraDiag = getExtraDiagram(ext);
   card.innerHTML = `
     <div class="ic-head">
       <div class="ic-dot ${ext.dot}"></div>
       <div class="ic-title">${ext.label}</div>
       <span class="ic-dur">${ext.dur}</span>
     </div>
-    <div class="ic-desc">${ext.desc}</div>
-    ${ext.cue ? `<div class="ic-cue">${ext.cue}</div>` : ''}
+    <div class="ic-body-row">
+      <div class="ic-diag">${extraDiag}</div>
+      <div class="ic-text">
+        <div class="ic-desc">${ext.desc}</div>
+        ${ext.cue ? `<div class="ic-cue">${ext.cue}</div>` : ''}
+      </div>
+    </div>
     ${logHtml}`;
 
   sessionInputs['ext-'+i] = { label: ext.label, type: ext.type };
