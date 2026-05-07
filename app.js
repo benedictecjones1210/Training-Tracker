@@ -657,7 +657,6 @@ function makeExCard(ex, i, w) {
   sessionInputs['ex-'+i] = { name: ex.n, sets: ex.s, reps: ex.r };
   return card;
 }
-}
 
 /* ── INFO CARD ── */
 function makeInfoCard(ext, i) {
